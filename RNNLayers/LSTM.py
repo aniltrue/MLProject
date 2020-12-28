@@ -42,11 +42,11 @@ class LSTMCell(AbstractRNNCell):
         h_prev = states[0][0]
         c_prev = states[0][1]
 
-        _input = self.recurrent_activation(K.dot(inputs, self.ki) + K.dot(h_prev, self.ri) + self.bi)
-        _forget = self.recurrent_activation(K.dot(inputs, self.kf) + K.dot(h_prev, self.rf) + self.bf)
-        _output = self.recurrent_activation(K.dot(inputs, self.ko) + K.dot(h_prev, self.ro) + self.bo)
+        _input = self.recurrent_activation(K.dot(inputs, self.ki) + K.dot(h_prev, self.ri))
+        _forget = self.recurrent_activation(K.dot(inputs, self.kf) + K.dot(h_prev, self.rf))
+        _output = self.recurrent_activation(K.dot(inputs, self.ko) + K.dot(h_prev, self.ro))
 
-        _c = self.activation(K.dot(inputs, self.kc) + K.dot(h_prev, self.rc))
+        _c = self.activation(K.dot(inputs, self.kc) + K.dot(h_prev, self.rc) + self.bc)
 
         c = self.recurrent_activation(_forget * c_prev + _input * _c)
         h = self.activation(c) * _output
