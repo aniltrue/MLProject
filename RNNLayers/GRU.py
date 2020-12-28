@@ -42,7 +42,7 @@ class GRUCell(AbstractRNNCell):
 
         _h = self.activation(K.dot(inputs, self.ko) + K.dot(_reset * h_prev, self.ro) + self.bo)
 
-        h = (1 - _update) * h_prev + _update * h_prev
+        h = (1 - _update) * h_prev + _update * _h
 
         return h, h
 

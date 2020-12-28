@@ -4,6 +4,7 @@ from tensorflow.keras.models import Sequential
 from RNNLayers.LSTM import LSTM, BiLSTM
 from RNNLayers.GRU import GRU, BiGRU
 from PennTreeReader import read_data, train_test_split
+import numpy as np
 
 def train():
     X_data, Y_data, unique_labels, words, word2id, id2word = read_data()
@@ -19,8 +20,8 @@ def train():
 
     model1.fit(X_data, Y_data, epochs=10, batch_size=128)
 
-    y_pred = model1.predict(X_test, batch_size=128)
-    print("Accuracy for LSTM:", (y_pred == Y_test).mean())
+    _, acc = model1.evaluate(X_test, Y_test, batch_size=16)
+    print("Accuracy for LSTM:", acc)
 
     model2 = Sequential()
     model2.add(Embedding(len(words) + 1, 100, input_length=100))
@@ -31,8 +32,8 @@ def train():
 
     model2.fit(X_data, Y_data, epochs=10, batch_size=128)
 
-    y_pred = model2.predict(X_test, batch_size=128)
-    print("Accuracy for GRU:", (y_pred == Y_test).mean())
+    _, acc = model2.evaluate(X_test, Y_test, batch_size=16)
+    print("Accuracy for GRU:", acc)
 
     model3 = Sequential()
     model3.add(Embedding(len(words) + 1, 100, input_length=100))
@@ -43,8 +44,8 @@ def train():
 
     model3.fit(X_data, Y_data, epochs=10, batch_size=128)
 
-    y_pred = model3.predict(X_test, batch_size=128)
-    print("Accuracy for BiLSTM:", (y_pred == Y_test).mean())
+    _, acc = model3.evaluate(X_test, Y_test, batch_size=16)
+    print("Accuracy for BiLSTM:", acc)
 
     model4 = Sequential()
     model4.add(Embedding(len(words) + 1, 100, input_length=100))
@@ -55,8 +56,8 @@ def train():
 
     model4.fit(X_data, Y_data, epochs=10, batch_size=128)
 
-    y_pred = model4.predict(X_test, batch_size=128)
-    print("Accuracy for BiGRU:", (y_pred == Y_test).mean())
+    _, acc = model1.evaluate(X_test, Y_test, batch_size=16)
+    print("Accuracy for BiGRU:", acc)
 
 if __name__ == "__main__":
     train()
