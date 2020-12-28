@@ -1,5 +1,4 @@
 import tensorflow as tf
-from tensorflow.keras.layers import Layer
 from RNNLayers.AbstractRNN import AbstractRNNCell, AbstractRNN
 import tensorflow.keras.backend as K
 
