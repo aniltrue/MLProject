@@ -11,6 +11,7 @@ def lstm_nig_cell(units: int,
                   bias_initializer: str = "zeros",
                   use_bias: bool = True,
                   **kwargs) -> RNNCellBuilder:
+
     cell = RNNCellBuilder(units, ["h", "C"], kernel_activation, recurrent_activation,
                           kernel_initializer, recurrent_initializer, bias_initializer, use_bias, **kwargs)
 
@@ -43,6 +44,7 @@ def lstm_nfg_cell(units: int,
                   bias_initializer: str = "zeros",
                   use_bias: bool = True,
                   **kwargs) -> RNNCellBuilder:
+
     cell = RNNCellBuilder(units, ["h", "C"], kernel_activation, recurrent_activation,
                           kernel_initializer, recurrent_initializer, bias_initializer, use_bias, **kwargs)
 
@@ -96,3 +98,38 @@ def lstm_nog_cell(units: int,
         .add_var("C_next", ["forget", "C", "input", "cell"],
                  lambda x: cell.recurrent_activation(x[0] * x[1] + x[2] * x[3])) \
         .add_var("h_next", ["C_next"], lambda x: cell.kernel_activation(x[0]))
+
+
+# LSTM without Input Activation
+def lstm_niaf_cell(units: int,
+                   peephole: bool = False,
+                   kernel_activation: str = "tanh",
+                   recurrent_activation: str = "hard_sigmoid",
+                   kernel_initializer: str = "glorot_uniform",
+                   recurrent_initializer: str = "orthogonal",
+                   bias_initializer: str = "zeros",
+                   use_bias: bool = True,
+                   **kwargs) -> RNNCellBuilder:
+
+    cell = RNNCellBuilder(units, ["h", "C"], kernel_activation, recurrent_activation,
+                          kernel_initializer, recurrent_initializer, bias_initializer, use_bias, **kwargs)
+
+    # input activation: linear
+    if peephole:
+        return cell \
+            .add_recurrent("input", ["X", "h", "C"], activation="linear") \
+            .add_recurrent("forget", ["X", "h", "C"]) \
+            .add_recurrent("output", ["X", "h", "C"]) \
+            .add_kernel("cell", ["X", "h"]) \
+            .add_var("C_next", ["forget", "C", "input", "cell"],
+                     lambda x: cell.recurrent_activation(x[0] * x[1] + x[2] * x[3])) \
+            .add_var("h_next", ["C_next", "output"], lambda x: cell.kernel_activation(x[0]) * x[1])
+
+    return cell \
+        .add_recurrent("input", ["X", "h"], activation="linear") \
+        .add_recurrent("forget", ["X", "h"]) \
+        .add_recurrent("output", ["X", "h"]) \
+        .add_kernel("cell", ["X", "h"]) \
+        .add_var("C_next", ["forget", "C", "input", "cell"],
+                 lambda x: cell.recurrent_activation(x[0] * x[1] + x[2] * x[3])) \
+        .add_var("h_next", ["C_next", "output"], lambda x: cell.kernel_activation(x[0]) * x[1])

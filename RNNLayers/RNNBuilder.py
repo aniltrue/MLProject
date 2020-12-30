@@ -2,6 +2,7 @@ from RNNLayers.AbstractRNN import AbstractRNN, AbstractRNNCell, AbstractBiRNN
 import tensorflow as tf
 import tensorflow.keras.backend as K
 from abc import ABC, abstractmethod
+from tensorflow.keras import activations
 
 
 class RNNCellBuilder(AbstractRNNCell):
@@ -29,21 +30,31 @@ class RNNCellBuilder(AbstractRNNCell):
         self._kernel_list = []
         self._operation_list = []
 
-    def add_recurrent(self, name: str, inputs: list):
+    def add_recurrent(self, name: str, inputs: list, activation=None):
+        if activation is None:
+            activation = self.recurrent_activation
+        elif activation is str:
+            activation = activations.get(activation)
+
         self._recurrent_list.append([name, inputs])
         self._operation_list.append([name, "r"])
 
-        f = self._generate_func(inputs, name, self.recurrent_activation)
+        f = self._generate_func(inputs, name, activation)
 
         self.vars[name] = [inputs, f]
 
         return self
 
-    def add_kernel(self, name: str, inputs: list):
+    def add_kernel(self, name: str, inputs: list, activation=None):
+        if activation is None:
+            activation = self.kernel_activation
+        elif activation is str:
+            activation = activations.get(activation)
+
         self._kernel_list.append([name, inputs])
         self._operation_list.append([name, "k"])
 
-        f = self._generate_func(inputs, name, self.kernel_activation)
+        f = self._generate_func(inputs, name, activation)
 
         self.vars[name] = [inputs, f]
 
@@ -155,7 +166,6 @@ class AbstractRNNBuilder(AbstractRNN, ABC):
                  bias_initializer: str,
                  use_bias: bool,
                  **kwargs) -> RNNCellBuilder:
-
         raise NotImplementedError("Abstract Method")
 
 
@@ -190,7 +200,6 @@ class AbstractBiRNNBuilder(AbstractBiRNN, ABC):
                          bias_initializer: str,
                          use_bias: bool,
                          **kwargs) -> RNNCellBuilder:
-
         raise NotImplementedError("Abstract Method")
 
     @abstractmethod
@@ -202,5 +211,4 @@ class AbstractBiRNNBuilder(AbstractBiRNN, ABC):
                           bias_initializer: str,
                           use_bias: bool,
                           **kwargs) -> RNNCellBuilder:
-
         raise NotImplementedError("Abstract Method")
