@@ -21,8 +21,8 @@ def lstm_cell(units: int,
             .add_recurrent("output", ["X", "h", "C"]) \
             .add_kernel("cell", ["X", "h"]) \
             .add_var("C_next", ["forget", "C", "input", "cell"],
-                     lambda inps: cell.recurrent_activation(inps[0] * inps[1] + inps[2] * inps[3])) \
-            .add_var("h_next", ["C_next", "output"], lambda inps: cell.kernel_activation(inps[0]) * inps[1])
+                     lambda x: cell.recurrent_activation(x[0] * x[1] + x[2] * x[3])) \
+            .add_var("h_next", ["C_next", "output"], lambda x: cell.kernel_activation(x[0]) * x[1])
 
     return cell \
         .add_recurrent("input", ["X", "h"]) \
@@ -30,8 +30,8 @@ def lstm_cell(units: int,
         .add_recurrent("output", ["X", "h"]) \
         .add_kernel("cell", ["X", "h"]) \
         .add_var("C_next", ["forget", "C", "input", "cell"],
-                 lambda X: cell.recurrent_activation(X[0] * X[1] + X[2] * X[3])) \
-        .add_var("h_next", ["C_next", "output"], lambda X: cell.kernel_activation(X[0]) * X[1])
+                 lambda x: cell.recurrent_activation(x[0] * x[1] + x[2] * x[3])) \
+        .add_var("h_next", ["C_next", "output"], lambda x: cell.kernel_activation(x[0]) * x[1])
 
 
 class LSTM(AbstractRNNBuilder):
@@ -43,7 +43,7 @@ class LSTM(AbstractRNNBuilder):
                  kernel_initializer: str = "glorot_uniform",
                  recurrent_initializer: str = "orthogonal",
                  bias_initializer: str = "zeros",
-                 reversed: bool = False,
+                 backward: bool = False,
                  return_sequences: bool = False,
                  use_bias: bool = True,
                  **kwargs):
@@ -52,7 +52,7 @@ class LSTM(AbstractRNNBuilder):
 
         super(LSTM, self).__init__(units, kernel_activation, recurrent_activation,
                                    kernel_initializer, recurrent_initializer, bias_initializer,
-                                   reversed, return_sequences, use_bias, **kwargs)
+                                   backward, return_sequences, use_bias, **kwargs)
 
     def get_cell(self, units: int,
                  kernel_activation: str,

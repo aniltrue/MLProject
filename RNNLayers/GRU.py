@@ -13,11 +13,11 @@ def gru_cell(units: int,
     cell = RNNCellBuilder(units, ["h"], kernel_activation, recurrent_activation,
                           kernel_initializer, recurrent_initializer, bias_initializer, use_bias, **kwargs)
 
-    return cell\
-        .add_recurrent("update", ["X", "h"])\
-        .add_recurrent("reset", ["X", "h"])\
-        .add_kernel("output", ["X", "reset"])\
-        .add_var("h_next", ["update", "h", "output"], lambda X: (1 - X[0]) * X[1] + X[0] * X[2])
+    return cell \
+        .add_recurrent("update", ["X", "h"]) \
+        .add_recurrent("reset", ["X", "h"]) \
+        .add_kernel("output", ["X", "reset"]) \
+        .add_var("h_next", ["update", "h", "output"], lambda x: (1 - x[0]) * x[1] + x[0] * x[2])
 
 
 class GRU(AbstractRNNBuilder):
@@ -28,14 +28,14 @@ class GRU(AbstractRNNBuilder):
                  kernel_initializer: str = "glorot_uniform",
                  recurrent_initializer: str = "orthogonal",
                  bias_initializer: str = "zeros",
-                 reversed: bool = False,
+                 backward: bool = False,
                  return_sequences: bool = False,
                  use_bias: bool = True,
                  **kwargs):
 
         super(GRU, self).__init__(units, kernel_activation, recurrent_activation,
                                   kernel_initializer, recurrent_initializer, bias_initializer,
-                                  reversed, return_sequences, use_bias, **kwargs)
+                                  backward, return_sequences, use_bias, **kwargs)
 
     def get_cell(self, units: int,
                  kernel_activation: str,
@@ -64,30 +64,30 @@ class BiGRU(AbstractBiRNNBuilder):
                  **kwargs):
 
         super(BiGRU, self).__init__(units, kernel_activation, recurrent_activation,
-                                  kernel_initializer, recurrent_initializer, bias_initializer,
-                                  return_sequences, use_bias, **kwargs)
+                                    kernel_initializer, recurrent_initializer, bias_initializer,
+                                    return_sequences, use_bias, **kwargs)
 
     def get_cell_forward(self, units: int,
-                 kernel_activation: str,
-                 recurrent_activation: str,
-                 kernel_initializer: str,
-                 recurrent_initializer: str,
-                 bias_initializer: str,
-                 use_bias: bool,
-                 **kwargs) -> RNNCellBuilder:
+                         kernel_activation: str,
+                         recurrent_activation: str,
+                         kernel_initializer: str,
+                         recurrent_initializer: str,
+                         bias_initializer: str,
+                         use_bias: bool,
+                         **kwargs) -> RNNCellBuilder:
 
         return gru_cell(units, kernel_activation, recurrent_activation,
                         kernel_initializer, recurrent_initializer, bias_initializer,
                         use_bias, **kwargs)
 
     def get_cell_backward(self, units: int,
-                 kernel_activation: str,
-                 recurrent_activation: str,
-                 kernel_initializer: str,
-                 recurrent_initializer: str,
-                 bias_initializer: str,
-                 use_bias: bool,
-                 **kwargs) -> RNNCellBuilder:
+                          kernel_activation: str,
+                          recurrent_activation: str,
+                          kernel_initializer: str,
+                          recurrent_initializer: str,
+                          bias_initializer: str,
+                          use_bias: bool,
+                          **kwargs) -> RNNCellBuilder:
 
         return gru_cell(units, kernel_activation, recurrent_activation,
                         kernel_initializer, recurrent_initializer, bias_initializer,

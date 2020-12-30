@@ -23,7 +23,7 @@ class RNNCellBuilder(AbstractRNNCell):
         self.states_number = len(states)
 
         self.vars = {}
-        self.w = {} # Weights with name
+        self.w = {}  # Weights with name
 
         self._recurrent_list = []
         self._kernel_list = []
@@ -50,15 +50,15 @@ class RNNCellBuilder(AbstractRNNCell):
         return self
 
     def _generate_func(self, inputs: list, name: str, activation):
-        def f(X: list):
-            assert len(X) == len(inputs)
+        def f(x: list):
+            assert len(x) == len(inputs)
             z = []
 
             for i, n in enumerate(inputs):
                 if i == 0:
-                    z.append(K.dot(X[i], self.w["%s_%s" % (name, n)]))
+                    z.append(K.dot(x[i], self.w["%s_%s" % (name, n)]))
                 else:
-                    z.append(K.dot(X[i], self.w["%s_%s" % (name, n)]) + z[-1])
+                    z.append(K.dot(x[i], self.w["%s_%s" % (name, n)]) + z[-1])
 
             if self.use_bias:
                 if len(z) == 0:
@@ -93,7 +93,7 @@ class RNNCellBuilder(AbstractRNNCell):
                                                                   initializer=initializer)
 
             if self.use_bias:
-                self.w["%s_bias" % name] = self.add_weight("%s_bias" % name, (self.units, ),
+                self.w["%s_bias" % name] = self.add_weight("%s_bias" % name, (self.units,),
                                                            initializer=self.bias_initializer)
 
         self.built = True
@@ -135,7 +135,7 @@ class AbstractRNNBuilder(AbstractRNN, ABC):
                  kernel_initializer: str = "glorot_uniform",
                  recurrent_initializer: str = "orthogonal",
                  bias_initializer: str = "zeros",
-                 reversed: bool = False,
+                 backward: bool = False,
                  return_sequences: bool = False,
                  use_bias: bool = True,
                  **kwargs):
@@ -144,7 +144,7 @@ class AbstractRNNBuilder(AbstractRNN, ABC):
                              kernel_initializer, recurrent_initializer, bias_initializer,
                              use_bias, **kwargs)
 
-        super(AbstractRNNBuilder, self).__init__(units, cell, reversed, return_sequences)
+        super(AbstractRNNBuilder, self).__init__(units, cell, backward, return_sequences)
 
     @abstractmethod
     def get_cell(self, units: int,
@@ -172,29 +172,17 @@ class AbstractBiRNNBuilder(AbstractBiRNN, ABC):
                  **kwargs):
 
         cell_f = self.get_cell_forward(units, kernel_activation, recurrent_activation,
-                             kernel_initializer, recurrent_initializer, bias_initializer,
-                             use_bias, **kwargs)
+                                       kernel_initializer, recurrent_initializer, bias_initializer,
+                                       use_bias, **kwargs)
 
         cell_b = self.get_cell_backward(units, kernel_activation, recurrent_activation,
-                               kernel_initializer, recurrent_initializer, bias_initializer,
-                               use_bias, **kwargs)
+                                        kernel_initializer, recurrent_initializer, bias_initializer,
+                                        use_bias, **kwargs)
 
         super(AbstractBiRNNBuilder, self).__init__(units, cell_f, cell_b, return_sequences)
 
     @abstractmethod
     def get_cell_forward(self, units: int,
-                 kernel_activation: str,
-                 recurrent_activation: str,
-                 kernel_initializer: str,
-                 recurrent_initializer: str,
-                 bias_initializer: str,
-                 use_bias: bool,
-                 **kwargs) -> RNNCellBuilder:
-
-        raise NotImplementedError("Abstract Method")
-
-    @abstractmethod
-    def get_cell_backward(self, units: int,
                          kernel_activation: str,
                          recurrent_activation: str,
                          kernel_initializer: str,
@@ -202,5 +190,17 @@ class AbstractBiRNNBuilder(AbstractBiRNN, ABC):
                          bias_initializer: str,
                          use_bias: bool,
                          **kwargs) -> RNNCellBuilder:
+
+        raise NotImplementedError("Abstract Method")
+
+    @abstractmethod
+    def get_cell_backward(self, units: int,
+                          kernel_activation: str,
+                          recurrent_activation: str,
+                          kernel_initializer: str,
+                          recurrent_initializer: str,
+                          bias_initializer: str,
+                          use_bias: bool,
+                          **kwargs) -> RNNCellBuilder:
 
         raise NotImplementedError("Abstract Method")
