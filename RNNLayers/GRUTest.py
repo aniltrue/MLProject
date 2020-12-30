@@ -1,4 +1,4 @@
-from RNNLayers.NewGRU import NewGRU
+from RNNLayers.GRU import GRU
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import Adam
@@ -9,7 +9,7 @@ if __name__ == "__main__":
     seq_length = 2
 
     model = Sequential()
-    model.add(NewGRU(32, input_shape=(seq_length, feature_size)))
+    model.add(GRU(32, input_shape=(seq_length, feature_size)))
     model.add(Dense(1, activation="sigmoid"))
 
     model.compile(optimizer=Adam(), loss="mse")
