@@ -24,7 +24,7 @@ def getPolarity(word, data, labels):
     return results
 
 
-def getEmbedding(data, labels, gloveSize = 100, hasPolarity = True, maxLength = 64):
+def getEmbedding(data, labels, gloveSize: int=100, hasPolarity: bool=False, maxLength: int=64):
     embeddingIndex = {}
 
     glovePath = os.path.join(os.path.expanduser("~"), "glove/glove.6B.%dd.txt" % (gloveSize))
