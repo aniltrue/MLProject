@@ -196,9 +196,9 @@ class LSTMVariants(AbstractRNNBuilder):
         self.peephole = peephole
         self.lstm_cell = lstm_cell
 
-        super(LSTM, self).__init__(units, kernel_activation, recurrent_activation,
-                                   kernel_initializer, recurrent_initializer, bias_initializer,
-                                   backward, return_sequences, use_bias, **kwargs)
+        super(LSTMVariants, self).__init__(units, kernel_activation, recurrent_activation,
+                                           kernel_initializer, recurrent_initializer, bias_initializer,
+                                           backward, return_sequences, use_bias, **kwargs)
 
     def get_cell(self, units: int,
                  kernel_activation: str,
@@ -232,9 +232,9 @@ class BiLSTMVariants(AbstractBiRNNBuilder):
         self.peephole = peephole
         self.lstm_cell = lstm_cell
 
-        super(BiLSTM, self).__init__(units, kernel_activation, recurrent_activation,
-                                     kernel_initializer, recurrent_initializer, bias_initializer,
-                                     return_sequences, use_bias, **kwargs)
+        super(BiLSTMVariants, self).__init__(units, kernel_activation, recurrent_activation,
+                                             kernel_initializer, recurrent_initializer, bias_initializer,
+                                             return_sequences, use_bias, **kwargs)
 
     def get_cell_forward(self, units: int,
                          kernel_activation: str,
