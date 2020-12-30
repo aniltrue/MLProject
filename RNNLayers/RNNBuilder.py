@@ -105,7 +105,7 @@ class RNNCellBuilder(AbstractRNNCell):
         flat_dims = tf.TensorShape([self.units]).as_list()
         init_state_size = [batch_size] + flat_dims
 
-        return [K.zeros(init_state_size, dtype=dtype) for _ in self.states]
+        return [tf.zeros(init_state_size, dtype=dtype) for _ in self.states]
 
     def call(self, inputs, states, **kwargs):
         assert len(states) == self.states_number
@@ -179,7 +179,7 @@ class AbstractBiRNNBuilder(AbstractBiRNN, ABC):
                                kernel_initializer, recurrent_initializer, bias_initializer,
                                use_bias, **kwargs)
 
-        super(AbstractBiRNN, self).__init__(units, cell_f, cell_b, return_sequences)
+        super(AbstractBiRNNBuilder, self).__init__(units, cell_f, cell_b, return_sequences)
 
     @abstractmethod
     def get_cell_forward(self, units: int,
