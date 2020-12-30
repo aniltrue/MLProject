@@ -178,7 +178,7 @@ LSTM_VARIANTS = {"NIG": lstm_nig_cell,
                  }
 
 
-class LSTM(AbstractRNNBuilder):
+class LSTMVariants(AbstractRNNBuilder):
     def __init__(self,
                  units: int,
                  lstm_cell: str,
@@ -215,7 +215,7 @@ class LSTM(AbstractRNNBuilder):
                                              use_bias, **kwargs)
 
 
-class BiLSTM(AbstractBiRNNBuilder):
+class BiLSTMVariants(AbstractBiRNNBuilder):
     def __init__(self,
                  units: int,
                  lstm_cell: str,
