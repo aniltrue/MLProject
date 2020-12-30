@@ -46,6 +46,15 @@ class GRUCell(AbstractRNNCell):
 
         return h, h
 
+    def get_initial_state(self, inputs):
+        batch_size = tf.compat.v1.shape(inputs)[0]
+        dtype = inputs.dtype
+
+        flat_dims = tf.TensorShape([self.units]).as_list()
+        init_state_size = [batch_size] + flat_dims
+
+        return tf.zeros(init_state_size, dtype=dtype)
+
 
 class GRU(AbstractRNN):
     def __init__(self,
@@ -63,15 +72,6 @@ class GRU(AbstractRNN):
                         kernel_initializer, recurrent_initializer, bias_initializer, **kwargs)
 
         super(GRU, self).__init__(units, cell, reversed, return_sequences, **kwargs)
-
-    def get_initial_state(self, inputs):
-        batch_size = tf.compat.v1.shape(inputs)[0]
-        dtype = inputs.dtype
-
-        flat_dims = tf.TensorShape([self.units]).as_list()
-        init_state_size = [batch_size] + flat_dims
-
-        return tf.zeros(init_state_size, dtype=dtype)
 
 
 class BiGRU(Layer):
@@ -95,15 +95,6 @@ class BiGRU(Layer):
                         kernel_initializer, recurrent_initializer, bias_initializer, **kwargs)
 
         super(BiGRU, self).__init__(**kwargs)
-
-    def get_initial_state(self, inputs):
-        batch_size = tf.compat.v1.shape(inputs)[0]
-        dtype = inputs.dtype
-
-        flat_dims = tf.TensorShape([self.units]).as_list()
-        init_state_size = [batch_size] + flat_dims
-
-        return tf.zeros(init_state_size, dtype=dtype)
 
     def build(self, input_shape):
         if isinstance(input_shape, list):
@@ -139,8 +130,8 @@ class BiGRU(Layer):
 
             return output, new_states
 
-        initial_states_f = self.get_initial_state(inputs),
-        initial_states_b = self.get_initial_state(inputs),
+        initial_states_f = self.cell_f.get_initial_state(inputs),
+        initial_states_b = self.cell_b.get_initial_state(inputs),
 
         last_output_f, outputs_f, states_f = K.rnn(step_f, inputs, initial_states=initial_states_f, go_backwards=False, input_length=input_shape[1])
         last_output_b, outputs_b, states_b = K.rnn(step_b, inputs, initial_states=initial_states_b, go_backwards=True, input_length=input_shape[1])

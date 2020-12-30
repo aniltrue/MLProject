@@ -27,6 +27,10 @@ class AbstractRNNCell(Layer, ABC):
     def call(self, inputs, states, **kwargs):
         raise NotImplementedError("Abstract Method")
 
+    @abstractmethod
+    def get_initial_state(self, inputs):
+        pass
+
 
 class AbstractRNN(Layer, ABC):
     def __init__(self, units: int, cell: AbstractRNNCell, reversed: bool = False, return_sequences: bool = False, **kwargs):
@@ -53,10 +57,6 @@ class AbstractRNN(Layer, ABC):
 
         self.built = True
 
-    @abstractmethod
-    def get_initial_state(self, inputs):
-        pass
-
     def call(self, inputs, **kwargs):
         input_shape = K.int_shape(inputs)
 
@@ -65,7 +65,7 @@ class AbstractRNN(Layer, ABC):
 
             return output, new_states
 
-        initial_states = self.get_initial_state(inputs),
+        initial_states = self.cell.get_initial_state(inputs),
 
         last_output, outputs, states = K.rnn(step_fn, inputs, initial_states=initial_states, go_backwards=self.reversed, input_length=input_shape[1])
 
