@@ -37,7 +37,7 @@ def lstm_cell(units: int,
 class LSTM(AbstractRNNBuilder):
     def __init__(self,
                  units: int,
-                 peephole: bool,
+                 peephole: bool = True,
                  kernel_activation: str = "tanh",
                  recurrent_activation: str = "hard_sigmoid",
                  kernel_initializer: str = "glorot_uniform",
@@ -72,7 +72,7 @@ class LSTM(AbstractRNNBuilder):
 class BiLSTM(AbstractBiRNNBuilder):
     def __init__(self,
                  units: int,
-                 peephole: bool = False,
+                 peephole: bool = True,
                  kernel_activation: str = "tanh",
                  recurrent_activation: str = "hard_sigmoid",
                  kernel_initializer: str = "glorot_uniform",
