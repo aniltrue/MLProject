@@ -3,7 +3,7 @@ from RNNLayers.RNNBuilder import RNNCellBuilder, AbstractRNNBuilder, AbstractBiR
 
 # LSTM without Input Gate
 def lstm_nig_cell(units: int,
-                  peephole: bool = False,
+                  peephole: bool = True,
                   kernel_activation: str = "tanh",
                   recurrent_activation: str = "hard_sigmoid",
                   kernel_initializer: str = "glorot_uniform",
@@ -36,7 +36,7 @@ def lstm_nig_cell(units: int,
 
 # LSTM without Forget Gate
 def lstm_nfg_cell(units: int,
-                  peephole: bool = False,
+                  peephole: bool = True,
                   kernel_activation: str = "tanh",
                   recurrent_activation: str = "hard_sigmoid",
                   kernel_initializer: str = "glorot_uniform",
@@ -69,7 +69,7 @@ def lstm_nfg_cell(units: int,
 
 # LSTM without Output Gate
 def lstm_nog_cell(units: int,
-                  peephole: bool = False,
+                  peephole: bool = True,
                   kernel_activation: str = "tanh",
                   recurrent_activation: str = "hard_sigmoid",
                   kernel_initializer: str = "glorot_uniform",
@@ -102,7 +102,7 @@ def lstm_nog_cell(units: int,
 
 # LSTM without Input Activation
 def lstm_niaf_cell(units: int,
-                   peephole: bool = False,
+                   peephole: bool = True,
                    kernel_activation: str = "tanh",
                    recurrent_activation: str = "hard_sigmoid",
                    kernel_initializer: str = "glorot_uniform",
@@ -137,7 +137,7 @@ def lstm_niaf_cell(units: int,
 
 # LSTM without Output Activation
 def lstm_noaf_cell(units: int,
-                   peephole: bool = False,
+                   peephole: bool = True,
                    kernel_activation: str = "tanh",
                    recurrent_activation: str = "hard_sigmoid",
                    kernel_initializer: str = "glorot_uniform",

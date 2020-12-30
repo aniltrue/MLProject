@@ -2,7 +2,7 @@ from RNNLayers.RNNBuilder import RNNCellBuilder, AbstractRNNBuilder, AbstractBiR
 
 
 def lstm_cell(units: int,
-              peephole: bool = False,
+              peephole: bool = True,
               kernel_activation: str = "tanh",
               recurrent_activation: str = "hard_sigmoid",
               kernel_initializer: str = "glorot_uniform",
