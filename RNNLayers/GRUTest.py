@@ -1,4 +1,4 @@
-from RNNLayers.GRU import GRU
+from RNNLayers.GRU import BiGRU, GRU
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import Adam
