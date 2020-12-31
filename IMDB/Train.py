@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "output/")
 
 
-def train_model(model, name: str, x_train, x_test, y_train, y_test, epochs: int = 2, batch_size: int = 64):
+def train_model(model, name: str, x_train, x_test, y_train, y_test, epochs: int = 100, batch_size: int = 64):
     print("Model:", name)
 
     history = model.fit(x_train, y_train, epochs=epochs, batch_size=batch_size, validation_data=(x_test, y_test))
