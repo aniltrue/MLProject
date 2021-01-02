@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "output/")
 
 
-def train_model(model, name: str, x_train, x_test, y_train, y_test, epochs: int = 100, batch_size: int = 64):
+def train_model(model, name: str, x_train, x_test, y_train, y_test, epochs: int = 2, batch_size: int = 64):
     print("Model:", name)
 
     history = model.fit(x_train, y_train, epochs=epochs, batch_size=batch_size, validation_data=(x_test, y_test))
@@ -33,11 +33,11 @@ def train_model(model, name: str, x_train, x_test, y_train, y_test, epochs: int 
 
     axs[0].set_title("Loss for %s" % name)
     axs[0].legend()
-    axs[0].set_xticks(list(range(1, epochs + 1)))
+    axs[0].set_xticks(list(range(1, epochs + 1)), rotate=90)
 
     axs[1].set_title("Accuracy for %s" % name)
     axs[1].legend()
-    axs[1].set_xticks(list(range(1, epochs + 1)))
+    axs[1].set_xticks(list(range(1, epochs + 1)), rotate=90)
 
     fig.tight_layout()
     plt.tight_layout()
@@ -85,14 +85,14 @@ def train(x_train, x_test, y_train, y_test, embedding, word_index):
     with open(os.path.join(OUTPUT_DIR, "word_index.pkl"), "wb") as f:
         pkl.dump(word_index, f)
 
-    train_model(get_model("LSTM", "LSTM", embedding), "LSTM", x_train, x_test, y_train, y_test)
-    train_model(get_model("GRU", "GRU", embedding), "GRU", x_train, x_test, y_train, y_test)
-    train_model(get_model("LSTM_NIG", "NIG", embedding), "LSTM NIG", x_train, x_test, y_train, y_test)
-    train_model(get_model("LSTM_NFG", "NFG", embedding), "LSTM NFG", x_train, x_test, y_train, y_test)
-    train_model(get_model("LSTM_NOG", "NOG", embedding), "LSTM NOG", x_train, x_test, y_train, y_test)
-    train_model(get_model("LSTM_NIAF", "NIAF", embedding), "LSTM NIAF", x_train, x_test, y_train, y_test)
-    train_model(get_model("LSTM_NOAF", "NOAF", embedding), "LSTM NOAF", x_train, x_test, y_train, y_test)
-    train_model(get_model("LSTM_NP", "NP", embedding), "LSTM NP", x_train, x_test, y_train, y_test)
+    # train_model(get_model("LSTM", "LSTM", embedding), "LSTM", x_train, x_test, y_train, y_test)
+    # train_model(get_model("GRU", "GRU", embedding), "GRU", x_train, x_test, y_train, y_test)
+    # train_model(get_model("LSTM_NIG", "NIG", embedding), "LSTM NIG", x_train, x_test, y_train, y_test)
+    # train_model(get_model("LSTM_NFG", "NFG", embedding), "LSTM NFG", x_train, x_test, y_train, y_test)
+    # train_model(get_model("LSTM_NOG", "NOG", embedding), "LSTM NOG", x_train, x_test, y_train, y_test)
+    # train_model(get_model("LSTM_NIAF", "NIAF", embedding), "LSTM NIAF", x_train, x_test, y_train, y_test)
+    # train_model(get_model("LSTM_NOAF", "NOAF", embedding), "LSTM NOAF", x_train, x_test, y_train, y_test)
+    # train_model(get_model("LSTM_NP", "NP", embedding), "LSTM NP", x_train, x_test, y_train, y_test)
 
 
 if __name__ == "__main__":

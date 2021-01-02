@@ -1,4 +1,4 @@
-from RNNLayers.LSTM import BiLSTM, LSTM
+from RNNLayers.LSTMVariants import LSTMVariants
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import Adam
@@ -9,7 +9,7 @@ if __name__ == "__main__":
     seq_length = 2
 
     model = Sequential()
-    model.add(BiLSTM(32, input_shape=(seq_length, feature_size)))
+    model.add(LSTMVariants(32, lstm_cell="NIAF", input_shape=(seq_length, feature_size)))
     model.add(Dense(1, activation="sigmoid"))
 
     model.compile(optimizer=Adam(), loss="mse")

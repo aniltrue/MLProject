@@ -47,14 +47,16 @@ class RNNCellBuilder(AbstractRNNCell):
 
     def add_kernel(self, name: str, inputs: list, activation=None):
         if activation is None:
-            activation = self.kernel_activation
-        elif activation is str:
-            activation = activations.get(activation)
+            act = self.kernel_activation
+        elif isinstance(activation, str):
+            act = activations.get(activation)
+        else:
+            act = activation
 
         self._kernel_list.append([name, inputs])
         self._operation_list.append([name, "k"])
 
-        f = self._generate_func(inputs, name, activation)
+        f = self._generate_func(inputs, name, act)
 
         self.vars[name] = [inputs, f]
 

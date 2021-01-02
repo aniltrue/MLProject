@@ -9,7 +9,7 @@ import nltk
 from sklearn.model_selection import train_test_split
 
 DATASET_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath("__file__"))), "data/")
-MAX_WORDS = 1024
+MAX_WORDS = 512
 UNIQUE_LABEL = ["positive", "negative"]
 
 
@@ -37,14 +37,17 @@ def get_data(random_state: int = 1234):
 
     sentences = []
     max_words = 0
+    sum_words = 0
 
     for text in texts:
         words = [word.lower() for word in word_tokenize(text)]
         sentences.append(words)
 
         max_words = max(max_words, len(words))
+        sum_words += len(words)
 
     print("Max. Words in a sentence:", max_words)
+    print("Average Words in a sentence:", (sum_words / len(texts)))
     print("We use", MAX_WORDS)
 
     sequences = [[word_index.get(word, 0) for word in sentence] for sentence in sentences]
