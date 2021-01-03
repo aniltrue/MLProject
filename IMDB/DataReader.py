@@ -31,7 +31,7 @@ def get_data(random_state: int = 1234):
     df['review'] = df['review'].apply(denoise_text)
 
     texts = df['review'].to_list()
-    labels = pd.get_dummies(df["sentiment"]).to_numpy()
+    labels = pd.get_dummies(df["sentiment"])["positive"].to_numpy()
 
     layer, word_index = getEmbedding(texts, labels, maxLength=MAX_WORDS)
 

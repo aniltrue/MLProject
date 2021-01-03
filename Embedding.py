@@ -43,7 +43,7 @@ def getEmbedding(data, labels, gloveSize: int=100, hasPolarity: bool=False, maxL
 
     wordIndexTemp = {}
 
-    totalLabel = labels.shape[1]
+    totalLabel = labels.shape[0]
 
     length = gloveSize + totalLabel if hasPolarity else gloveSize
     w2vector = np.zeros((len(wordIndex) + 1, length))

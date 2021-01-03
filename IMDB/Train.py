@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "output/")
 
 
-def train_model(model, name: str, x_train, x_test, y_train, y_test, epochs: int = 150, batch_size: int = 64):
+def train_model(model, name: str, x_train, x_test, y_train, y_test, epochs: int = 25, batch_size: int = 64):
     print("Model:", name)
 
     history = model.fit(x_train, y_train, epochs=epochs, batch_size=batch_size, validation_data=(x_test, y_test))
@@ -26,10 +26,10 @@ def train_model(model, name: str, x_train, x_test, y_train, y_test, epochs: int 
 
     fig, axs = plt.subplots(1, 2)
 
-    axs[0].plot(list(range(1, epochs + 1)), history.history["loss"], c="r", marker="+", label="train")
-    axs[0].plot(list(range(1, epochs + 1)), history.history["val_loss"], c="b", marker="*", label="test")
-    axs[1].plot(list(range(1, epochs + 1)), history.history["acc"], c="r", marker="+", label="train")
-    axs[1].plot(list(range(1, epochs + 1)), history.history["val_acc"], c="b", marker="*", label="test")
+    axs[0].plot(list(range(1, epochs + 1)), history.history["loss"], c="r", label="train")
+    axs[0].plot(list(range(1, epochs + 1)), history.history["val_loss"], c="b", label="test")
+    axs[1].plot(list(range(1, epochs + 1)), history.history["acc"], c="r", label="train")
+    axs[1].plot(list(range(1, epochs + 1)), history.history["val_acc"], c="b", label="test")
 
     axs[0].set_title("Loss for %s" % name)
     axs[0].legend()
@@ -53,7 +53,7 @@ def train_model(model, name: str, x_train, x_test, y_train, y_test, epochs: int 
     print("%s model saved." % model)
 
 
-def get_model(name: str, cell_name: str, embedding, max_words: int = 512, layer_size: int = 128, output_size: int = 2):
+def get_model(name: str, cell_name: str, embedding, max_words: int = 512, layer_size: int = 128, output_size: int = 1):
     input_layer = Input(shape=(max_words,), dtype="int32", name="input")
     embedded_layer = embedding(input_layer)
 
@@ -70,10 +70,10 @@ def get_model(name: str, cell_name: str, embedding, max_words: int = 512, layer_
 
     rnn_layer = rnn(drop_out1)
     drop_out2 = Dropout(0.2)(rnn_layer)
-    output_layer = Dense(output_size, activation="softmax")(drop_out2)
+    output_layer = Dense(output_size, activation="sigmoid")(drop_out2)
 
     model = Model(inputs=[input_layer], outputs=[output_layer], name=name)
-    model.compile(loss="categorical_crossentropy", optimizer=Adam(), metrics=["acc"])
+    model.compile(loss="binary_crossentropy", optimizer=Adam(), metrics=["acc"])
 
     return model
 
@@ -90,9 +90,9 @@ def train(x_train, x_test, y_train, y_test, embedding, word_index):
     # train_model(get_model("LSTM_NIG", "NIG", embedding), "LSTM NIG", x_train, x_test, y_train, y_test)
     # train_model(get_model("LSTM_NFG", "NFG", embedding), "LSTM NFG", x_train, x_test, y_train, y_test)
     # train_model(get_model("LSTM_NOG", "NOG", embedding), "LSTM NOG", x_train, x_test, y_train, y_test)
+    train_model(get_model("LSTM_NP", "NP", embedding), "LSTM NP", x_train, x_test, y_train, y_test)
     train_model(get_model("LSTM_NIAF", "NIAF", embedding), "LSTM NIAF", x_train, x_test, y_train, y_test)
     train_model(get_model("LSTM_NOAF", "NOAF", embedding), "LSTM NOAF", x_train, x_test, y_train, y_test)
-    train_model(get_model("LSTM_NP", "NP", embedding), "LSTM NP", x_train, x_test, y_train, y_test)
 
 
 if __name__ == "__main__":
