@@ -10,7 +10,7 @@ class AbstractRNNCell(Layer, ABC):
     def __init__(self,
                  units: int,
                  kernel_activation: str = "tanh",
-                 recurrent_activation: str = "sigmoid",
+                 recurrent_activation: str = "hard_sigmoid",
                  kernel_initializer: str = "glorot_uniform",
                  recurrent_initializer: str = "orthogonal",
                  bias_initializer: str = "zeros",
