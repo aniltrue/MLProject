@@ -170,11 +170,45 @@ def lstm_noaf_cell(units: int,
         .add_var("h_next", ["C_next", "output"], lambda x: x[0] * x[1])
 
 
+def lstm_fgr_cell(units: int,
+              peephole: bool = True,
+              kernel_activation: str = "tanh",
+              recurrent_activation: str = "hard_sigmoid",
+              kernel_initializer: str = "glorot_uniform",
+              recurrent_initializer: str = "orthogonal",
+              bias_initializer: str = "zeros",
+              use_bias: bool = True,
+              **kwargs) -> RNNCellBuilder:
+
+    cell = RNNCellBuilder(units, ["h", "C", "input", "forget", "output"], kernel_activation, recurrent_activation,
+                          kernel_initializer, recurrent_initializer, bias_initializer, use_bias, **kwargs)
+
+    if peephole:
+        return cell \
+            .add_recurrent("input_next", ["X", "h", "C", "input", "forget", "output"]) \
+            .add_recurrent("forget_next", ["X", "h", "C", "input", "forget", "output"]) \
+            .add_recurrent("output_next", ["X", "h", "C", "input", "forget", "output"]) \
+            .add_kernel("cell", ["X", "h"]) \
+            .add_var("C_next", ["forget_next", "C", "input_next", "cell"],
+                     lambda x: cell.recurrent_activation(x[0] * x[1] + x[2] * x[3])) \
+            .add_var("h_next", ["C_next", "output_next"], lambda x: cell.kernel_activation(x[0]) * x[1])
+
+    return cell \
+        .add_recurrent("input_next", ["X", "h", "input", "forget", "output"]) \
+        .add_recurrent("forget_next", ["X", "h", "input", "forget", "output"]) \
+        .add_recurrent("output_next", ["X", "h", "input", "forget", "output"]) \
+        .add_kernel("cell", ["X", "h"]) \
+        .add_var("C_next", ["forget_next", "C", "input_next", "cell"],
+                 lambda x: cell.recurrent_activation(x[0] * x[1] + x[2] * x[3])) \
+        .add_var("h_next", ["C_next", "output_next"], lambda x: cell.kernel_activation(x[0]) * x[1])
+
+
 LSTM_VARIANTS = {"NIG": lstm_nig_cell,
                  "NFG": lstm_nfg_cell,
                  "NOG": lstm_nog_cell,
                  "NIAF": lstm_niaf_cell,
                  "NOAF": lstm_noaf_cell,
+                 "FGR": lstm_fgr_cell
                  }
 
 

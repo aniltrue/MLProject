@@ -8,7 +8,7 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 import nltk
 from sklearn.model_selection import train_test_split
 
-DATASET_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath("__file__"))), "data/")
+DATASET_DIR = os.path.join(os.path.dirname(os.path.abspath("__file__")), "data/")
 MAX_WORDS = 512
 UNIQUE_LABEL = ["positive", "negative"]
 
