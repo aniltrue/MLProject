@@ -52,7 +52,7 @@ class LSTM(AbstractRNNBuilder):
 
         super(LSTM, self).__init__(units, kernel_activation, recurrent_activation,
                                    kernel_initializer, recurrent_initializer, bias_initializer,
-                                   backward, return_sequences, use_bias, **kwargs)
+                                   backward, return_sequences, use_bias, name="LSTM", **kwargs)
 
     def get_cell(self, units: int,
                  kernel_activation: str,
@@ -86,7 +86,7 @@ class BiLSTM(AbstractBiRNNBuilder):
 
         super(BiLSTM, self).__init__(units, kernel_activation, recurrent_activation,
                                      kernel_initializer, recurrent_initializer, bias_initializer,
-                                     return_sequences, use_bias, **kwargs)
+                                     return_sequences, use_bias, name="BiLSTM", **kwargs)
 
     def get_cell_forward(self, units: int,
                          kernel_activation: str,

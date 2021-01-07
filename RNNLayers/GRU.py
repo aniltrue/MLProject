@@ -35,7 +35,7 @@ class GRU(AbstractRNNBuilder):
 
         super(GRU, self).__init__(units, kernel_activation, recurrent_activation,
                                   kernel_initializer, recurrent_initializer, bias_initializer,
-                                  backward, return_sequences, use_bias, **kwargs)
+                                  backward, return_sequences, use_bias, name="GRU", **kwargs)
 
     def get_cell(self, units: int,
                  kernel_activation: str,
@@ -65,7 +65,7 @@ class BiGRU(AbstractBiRNNBuilder):
 
         super(BiGRU, self).__init__(units, kernel_activation, recurrent_activation,
                                     kernel_initializer, recurrent_initializer, bias_initializer,
-                                    return_sequences, use_bias, **kwargs)
+                                    return_sequences, use_bias, name="BiGRU", **kwargs)
 
     def get_cell_forward(self, units: int,
                          kernel_activation: str,

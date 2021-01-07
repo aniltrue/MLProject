@@ -232,7 +232,7 @@ class LSTMVariants(AbstractRNNBuilder):
 
         super(LSTMVariants, self).__init__(units, kernel_activation, recurrent_activation,
                                            kernel_initializer, recurrent_initializer, bias_initializer,
-                                           backward, return_sequences, use_bias, **kwargs)
+                                           backward, return_sequences, use_bias, name="LSTM_%s" % lstm_cell, **kwargs)
 
     def get_cell(self, units: int,
                  kernel_activation: str,
@@ -268,7 +268,7 @@ class BiLSTMVariants(AbstractBiRNNBuilder):
 
         super(BiLSTMVariants, self).__init__(units, kernel_activation, recurrent_activation,
                                              kernel_initializer, recurrent_initializer, bias_initializer,
-                                             return_sequences, use_bias, **kwargs)
+                                             return_sequences, use_bias, name="BiLSTM_%s" % lstm_cell, **kwargs)
 
     def get_cell_forward(self, units: int,
                          kernel_activation: str,
