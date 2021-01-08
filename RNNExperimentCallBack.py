@@ -4,6 +4,8 @@ import pandas as pd
 from RNNLayers.AbstractRNN import AbstractRNN, AbstractBiRNN
 import os
 import matplotlib.pyplot as plt
+import time
+from datetime import timedelta
 
 
 class RNNExperimentCallBack(Callback):
@@ -55,7 +57,10 @@ class RNNExperimentCallBack(Callback):
 
         self.format = "%s_%s_%d_%d_%s" % (experiment_name, dataset, experiment_id, layer_size, layer_activation)
 
-        self.logs = pd.DataFrame(columns=["epoch", "loss", self.metric, "val_loss", "val_%s" % self.metric])
+        self.logs = pd.DataFrame(columns=["epoch", "loss", self.metric, "val_loss", "val_%s" % self.metric, "time"])
+
+        self.training_start_time = 0
+        self.epoch_start_time = 0
 
     def on_train_begin(self, logs=None):
         self.logs.to_csv(os.path.join(self.log_dir, "%s.csv" % self.format))
@@ -63,7 +68,10 @@ class RNNExperimentCallBack(Callback):
         print("Experiment %d(%s) training begins." % (self.id, self.name))
         print("-" * 50)
 
+        self.training_start_time = time.time()
+
     def on_train_end(self, logs=None):
+        elapsed_time = timedelta(seconds=time.time() - self.training_start_time)
         self.model.save_weights(os.path.join(self.log_dir, "%s.h5" % self.format))
 
         epochs = self.logs.shape[0]
@@ -73,6 +81,7 @@ class RNNExperimentCallBack(Callback):
         self.experiments.loc[self.experiments["ID"] == self.id, ["val_loss"]] = logs["val_loss"]
         self.experiments.loc[self.experiments["ID"] == self.id, ["val_metric"]] = logs["val_%s" % self.metric]
         self.experiments.loc[self.experiments["ID"] == self.id, ["Epoch"]] = epochs
+        self.experiments.loc[self.experiments["ID"] == self.id, ["Total Time"]] = elapsed_time
 
         self.experiments.to_csv(self.experiments_path)
 
@@ -98,7 +107,7 @@ class RNNExperimentCallBack(Callback):
         plt.show()
 
         print("-" * 50)
-        print("Experiment %d(%s) is completed." % (self.id, self.name))
+        print("Experiment %d(%s) is completed in %s." % (self.id, self.name, str(elapsed_time)))
         print("Training Loss:\t{:.3f}".format(logs["loss"]))
         print("Validation Loss:\t{:.3f}".format(logs["val_loss"]))
 
@@ -111,12 +120,16 @@ class RNNExperimentCallBack(Callback):
 
         print("-" * 50)
 
+    def on_epoch_begin(self, epoch, logs=None):
+        self.epoch_start_time = time.time()
+
     def on_epoch_end(self, epoch, logs=None):
         row = {"epoch": int(epoch),
                "loss": logs["loss"],
                self.metric: logs[self.metric],
                "val_loss": logs["val_loss"],
-               "val_%s" % self.metric: logs["val_%s" % self.metric]}
+               "val_%s" % self.metric: logs["val_%s" % self.metric],
+               "time": time.time() - self.epoch_start_time}
 
         self.logs = self.logs.append(row, ignore_index=True)
 
