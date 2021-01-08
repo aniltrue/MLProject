@@ -1,1 +1,1 @@
-,ID,Dataset,Experiment Name,RNN,Epoch,Units,Activation,loss,metric,val_loss,val_metric,test_loss,test_metric,
+,ID,Dataset,Experiment Name,RNN,Epoch,Units,Activation,Metric,train_loss,train_metric,val_loss,val_metric,Total Time

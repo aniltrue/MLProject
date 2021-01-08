@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 
 
 class RNNExperimentCallBack(Callback):
-    def __init__(self, model: Model, dataset: str, metric: str = "acc",
-                 log_dir: str = "logs/", experiments_path: str = "experiments.csv"):
+    def __init__(self, model: Model, dataset: str,
+                 log_dir: str = "logs/", experiments_path: str = "experiments.csv", metric: str = "acc"):
 
         super().__init__()
 
@@ -17,7 +17,7 @@ class RNNExperimentCallBack(Callback):
         self.model = model
         self.metric = metric
 
-        self.experiments = pd.read_csv(experiments_path)
+        self.experiments = pd.read_csv(experiments_path, index_col=0)
 
         experiment_name = model.name
         experiment_id = self.experiments.shape[0]
@@ -45,7 +45,8 @@ class RNNExperimentCallBack(Callback):
                "Experiment Name": experiment_name,
                "RNN": layer_name,
                "Units": layer_size,
-               "Activation": layer_activation}
+               "Activation": layer_activation,
+               "Metric": self.metric}
 
         self.experiments = self.experiments.append(row, ignore_index=True)
         self.experiments.to_csv(experiments_path)
@@ -67,8 +68,8 @@ class RNNExperimentCallBack(Callback):
 
         epochs = self.logs.shape[0]
 
-        self.experiments.loc[self.experiments["ID"] == self.id, ["loss"]] = logs["loss"]
-        self.experiments.loc[self.experiments["ID"] == self.id, ["metric"]] = logs[self.metric]
+        self.experiments.loc[self.experiments["ID"] == self.id, ["train_loss"]] = logs["loss"]
+        self.experiments.loc[self.experiments["ID"] == self.id, ["train_metric"]] = logs[self.metric]
         self.experiments.loc[self.experiments["ID"] == self.id, ["val_loss"]] = logs["val_loss"]
         self.experiments.loc[self.experiments["ID"] == self.id, ["val_metric"]] = logs["val_%s" % self.metric]
         self.experiments.loc[self.experiments["ID"] == self.id, ["Epoch"]] = epochs
@@ -79,8 +80,8 @@ class RNNExperimentCallBack(Callback):
 
         axs[0].plot(list(range(1, epochs + 1)), self.logs["loss"].to_numpy(), c="r", label="train")
         axs[0].plot(list(range(1, epochs + 1)), self.logs["val_loss"].to_numpy(), c="b", label="test")
-        axs[1].plot(list(range(1, epochs + 1)), self.logs["metric"].to_numpy(), c="r", label="train")
-        axs[1].plot(list(range(1, epochs + 1)), self.logs["val_metric"].to_numpy(), c="b", label="test")
+        axs[1].plot(list(range(1, epochs + 1)), self.logs[self.metric].to_numpy(), c="r", label="train")
+        axs[1].plot(list(range(1, epochs + 1)), self.logs["val_%s" % self.metric].to_numpy(), c="b", label="test")
 
         axs[0].set_title("Loss for %s" % self.name)
         axs[0].legend()
@@ -110,29 +111,8 @@ class RNNExperimentCallBack(Callback):
 
         print("-" * 50)
 
-    def on_test_begin(self, logs=None):
-        print("-" * 50)
-        print("Experiment %d(%s) test begins." % (self.id, self.name))
-        print("-" * 50)
-
-    def on_test_end(self, logs=None):
-        self.experiments.loc[self.experiments["ID"] == self.id, ["test_loss"]] = logs["loss"]
-        self.experiments.loc[self.experiments["ID"] == self.id, ["test_metric"]] = logs[self.metric]
-
-        self.experiments.to_csv(self.experiments_path)
-
-        print("-" * 50)
-        print("Experiment %d(%s) test is completed." % (self.id, self.name))
-        print("Test Loss:\t{:.3f}".format(logs["loss"]))
-        if self.metric == "acc" or self.metric == "accuracy":
-            print("Test Accuracy:\t{:.2f}".format(logs[self.metric] * 100))
-        else:
-            print("Test {}:\t{:.4f}".format(self.metric, logs[self.metric]))
-
-        print("-" * 50)
-
     def on_epoch_end(self, epoch, logs=None):
-        row = {"epoch": epoch,
+        row = {"epoch": int(epoch),
                "loss": logs["loss"],
                self.metric: logs[self.metric],
                "val_loss": logs["val_loss"],

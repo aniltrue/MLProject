@@ -2,24 +2,22 @@ from IMDB.DataReader import get_data
 from RNNLayers.LSTM import LSTM
 from RNNLayers.LSTMVariants import LSTMVariants
 from RNNLayers.GRU import GRU
-import pandas as pd
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Dense, SpatialDropout1D, Dropout
 from tensorflow.keras.optimizers import Adam
 import pickle as pkl
 import os
-import matplotlib.pyplot as plt
 from RNNExperimentCallBack import RNNExperimentCallBack
 
 OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "output/")
 EXPERIMENTS_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "experiments.csv")
 
 
-def train_model(model, name: str, x_train, x_test, y_train, y_test, epochs: int = 5, batch_size: int = 64):
-    print("Model:", name)
-
+def train_model(model, name: str, x_train, x_test, y_train, y_test, epochs: int = 2, batch_size: int = 64):
     model.fit(x_train, y_train, epochs=epochs, batch_size=batch_size, validation_data=(x_test, y_test),
               callbacks=[RNNExperimentCallBack(model, "IMDB", OUTPUT_DIR, EXPERIMENTS_FILE)])
+
+    del model
 
 
 def get_model(name: str, cell_name: str, embedding, max_words: int = 512, layer_size: int = 128, output_size: int = 1):
