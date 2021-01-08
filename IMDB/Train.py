@@ -13,7 +13,7 @@ OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "output/")
 EXPERIMENTS_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "experiments.csv")
 
 
-def train_model(model, name: str, x_train, x_test, y_train, y_test, epochs: int = 2, batch_size: int = 64):
+def train_model(model, x_train, x_test, y_train, y_test, epochs: int = 2, batch_size: int = 64):
     model.fit(x_train, y_train, epochs=epochs, batch_size=batch_size, validation_data=(x_test, y_test),
               callbacks=[RNNExperimentCallBack(model, "IMDB", batch_size, OUTPUT_DIR, EXPERIMENTS_FILE)])
 
@@ -52,15 +52,15 @@ def train(x_train, x_test, y_train, y_test, embedding, word_index):
     with open(os.path.join(OUTPUT_DIR, "word_index.pkl"), "wb") as f:
         pkl.dump(word_index, f)
 
-    # train_model(get_model("LSTM", "LSTM", embedding), "LSTM", x_train, x_test, y_train, y_test)
-    train_model(get_model("GRU", "GRU", embedding), "GRU", x_train, x_test, y_train, y_test)
-    # train_model(get_model("LSTM_NIG", "NIG", embedding), "LSTM NIG", x_train, x_test, y_train, y_test)
-    # train_model(get_model("LSTM_NFG", "NFG", embedding), "LSTM NFG", x_train, x_test, y_train, y_test)
-    # train_model(get_model("LSTM_NOG", "NOG", embedding), "LSTM NOG", x_train, x_test, y_train, y_test)
-    # train_model(get_model("LSTM_NP", "NP", embedding), "LSTM NP", x_train, x_test, y_train, y_test)
-    # train_model(get_model("LSTM_NIAF", "NIAF", embedding), "LSTM NIAF", x_train, x_test, y_train, y_test)
-    # train_model(get_model("LSTM_NOAF", "NOAF", embedding), "LSTM NOAF", x_train, x_test, y_train, y_test)
-
+    # train_model(get_model("LSTM", "LSTM", embedding), x_train, x_test, y_train, y_test)
+    train_model(get_model("GRU", "GRU", embedding), x_train, x_test, y_train, y_test)
+    # train_model(get_model("LSTM_NIG", "NIG", embedding), x_train, x_test, y_train, y_test)
+    # train_model(get_model("LSTM_NFG", "NFG", embedding), x_train, x_test, y_train, y_test)
+    # train_model(get_model("LSTM_NOG", "NOG", embedding), x_train, x_test, y_train, y_test)
+    # train_model(get_model("LSTM_NP", "NP", embedding), x_train, x_test, y_train, y_test)
+    # train_model(get_model("LSTM_NIAF", "NIAF", embedding), x_train, x_test, y_train, y_test)
+    # train_model(get_model("LSTM_NOAF", "NOAF", embedding), x_train, x_test, y_train, y_test)
+    # train_model(get_model("LSTM_FGR", "FGR", embedding), x_train, x_test, y_train, y_test)
 
 if __name__ == "__main__":
     x_train, x_test, y_train, y_test, embedding, word_index = get_data()

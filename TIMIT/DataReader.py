@@ -101,7 +101,7 @@ def get_data(sample_rate: int = 4000):
 
     print("Max. Sequence in Test Set:", max_seq_tt)
 
-    return x_train, x_test, y_train, y_test
+        return x_train, x_test, y_train, y_test
 
 
 if __name__ == "__main__":
