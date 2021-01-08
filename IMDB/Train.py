@@ -15,7 +15,7 @@ EXPERIMENTS_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(
 
 def train_model(model, name: str, x_train, x_test, y_train, y_test, epochs: int = 2, batch_size: int = 64):
     model.fit(x_train, y_train, epochs=epochs, batch_size=batch_size, validation_data=(x_test, y_test),
-              callbacks=[RNNExperimentCallBack(model, "IMDB", OUTPUT_DIR, EXPERIMENTS_FILE)])
+              callbacks=[RNNExperimentCallBack(model, "IMDB", batch_size, OUTPUT_DIR, EXPERIMENTS_FILE)])
 
     del model
 

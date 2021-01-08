@@ -9,7 +9,7 @@ from datetime import timedelta
 
 
 class RNNExperimentCallBack(Callback):
-    def __init__(self, model: Model, dataset: str,
+    def __init__(self, model: Model, dataset: str, batch_size: int,
                  log_dir: str = "logs/", experiments_path: str = "experiments.csv", metric: str = "acc"):
 
         super().__init__()
@@ -18,6 +18,7 @@ class RNNExperimentCallBack(Callback):
         self.experiments_path = experiments_path
         self.model = model
         self.metric = metric
+        self.batch_size = batch_size
 
         self.experiments = pd.read_csv(experiments_path, index_col=0)
 
@@ -48,14 +49,15 @@ class RNNExperimentCallBack(Callback):
                "RNN": layer_name,
                "Units": layer_size,
                "Activation": layer_activation,
-               "Metric": self.metric}
+               "Metric": self.metric,
+               "Batch Size": batch_size}
 
         self.experiments = self.experiments.append(row, ignore_index=True)
         self.experiments.to_csv(experiments_path)
         self.id = experiment_id
         self.name = experiment_name
 
-        self.format = "%s_%s_%d_%d_%s" % (experiment_name, dataset, experiment_id, layer_size, layer_activation)
+        self.format = "%s_%s_%d_%d_%s_%d" % (experiment_name, dataset, experiment_id, layer_size, layer_activation, batch_size)
 
         self.logs = pd.DataFrame(columns=["epoch", "loss", self.metric, "val_loss", "val_%s" % self.metric, "time"])
 
