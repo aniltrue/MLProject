@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 from scipy.io.wavfile import read as read_wave
+from scipy.signal import resample
 import os
-from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATASET_DIR = os.path.join(ROOT_DIR, "Data/TIMIT/")
@@ -31,15 +31,16 @@ def one_hot_label(tag: str):
     return np.identity(len(LABELS))[LABELS.index(tag), :]
 
 
-def read_file(audio_path: str, phonetic_path: str):
+def read_file(audio_path: str, phonetic_path: str, sample_rate: int = 4000):
     max_value = np.power(2, 15) - 1  # 16bit
 
     with open(os.path.join(DATASET_DIR, "data/%s" % phonetic_path), "r") as f:
         phonetic_infos = f.readlines()
 
-    sample_rate, wav = read_wave(os.path.join(DATASET_DIR, "data/%s" % audio_path))
+    _, wav = read_wave(os.path.join(DATASET_DIR, "data/%s" % audio_path))
+    wav = resample(wav, sample_rate)
 
-    data = (wav.copy() + max_value) / max_value
+    data = (wav.copy() + max_value) / (2. * max_value) # Resize in [0, 1]
 
     x = []
     y = []
@@ -60,42 +61,45 @@ def read_file(audio_path: str, phonetic_path: str):
     return x, y
 
 
-def get_data():
-    x_train, y_train = [], []
-    audio_list, phonetic_list = read_csv("train")
+def _get_data(type: str, sample_rate: int):
+    x_list, y_list = [], []
+    audio_list, phonetic_list = read_csv(type)
 
     max_seq = 0
 
     for audio_path, phonetic_path in zip(audio_list, phonetic_list):
-        x, y = read_file(audio_path, phonetic_path)
-        x_train.extend(x)
-        y_train.extend(y)
+        _x, _y = read_file(audio_path, phonetic_path, sample_rate=sample_rate)
+        x_list.extend(_x)
+        y_list.extend(_y)
 
-        for seq in x:
+        for seq in _x:
             max_seq = max(max_seq, seq.shape[0])
 
-    print("Max. Sequence in Training:", max_seq)
+    return x_list, np.array(y_list, dtype="float32"), max_seq
 
-    # x_train = pad_sequences(x_train, maxlen=max_seq, padding="pre", truncating="post")
-    y_train = np.array(y_train, dtype="float32")
 
-    x_test, y_test = [], []
-    audio_list, phonetic_list = read_csv("test")
+def generate_seq(x_list: list, seq_length: int):
+    x = np.zeros((len(x_list), seq_length))
 
-    max_seq_tt = 0
+    for i, _x in enumerate(x_list):
+        if _x.shape[0] > seq_length:
+            x[i] = _x[_x.shape[0] - seq_length:]
+        else:
+            x[i, max(0, seq_length - _x.shape[0]):] = _x
 
-    for audio_path, phonetic_path in zip(audio_list, phonetic_list):
-        x, y = read_file(audio_path, phonetic_path)
-        x_test.extend(x)
-        y_test.extend(y)
+    return x
 
-        for seq in x:
-            max_seq_tt = max(max_seq_tt, seq.shape[0])
 
-    print("Max. Sequence in Test:", max_seq_tt)
+def get_data(sample_rate: int = 4000):
+    x_list, y_train, max_seq_tr = _get_data("train", sample_rate)
+    x_train = generate_seq(x_list, max_seq_tr)
 
-    # x_test = pad_sequences(x_test, maxlen=max_seq, padding="pre", truncating="post")
-    y_test = np.array(y_test, dtype="float32")
+    print("Max. Sequence in Training Set:", max_seq_tr)
+
+    x_list, y_test, max_seq_tt = _get_data("test", sample_rate)
+    x_test = generate_seq(x_list, max_seq_tr)
+
+    print("Max. Sequence in Test Set:", max_seq_tt)
 
     return x_train, x_test, y_train, y_test
 
@@ -103,7 +107,7 @@ def get_data():
 if __name__ == "__main__":
     x_train, x_test, y_train, y_test = get_data()
 
-    # print(x_train.shape)
+    print(x_train.shape)
     print(y_train.shape)
-    # print(x_test.shape)
+    print(x_test.shape)
     print(y_test.shape)
