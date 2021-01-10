@@ -1,2 +1,1 @@
 ,ID,Dataset,Experiment Name,RNN,Epoch,Units,Batch Size,Activation,Metric,train_loss,train_metric,val_loss,val_metric,Total Time
-0,0,TIMIT,GRU,gru,2,32,64,tanh,acc,3.814199924468994,0.051035817712545395,3.8222756385803223,0.05012749880552292,0:28:16.590365

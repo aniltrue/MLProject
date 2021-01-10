@@ -24,6 +24,15 @@ def getPolarity(word, data, labels):
     return results
 
 
+def getWordIndex(data):
+    tokenizer = Tokenizer()
+    tokenizer.fit_on_texts(data)
+
+    wordIndex = tokenizer.word_index
+
+    return wordIndex
+
+
 def getEmbedding(data, labels, gloveSize: int=100, hasPolarity: bool=False, maxLength: int=64):
     embeddingIndex = {}
 

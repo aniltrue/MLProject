@@ -1,5 +1,5 @@
 import pandas as pd
-from Embedding import getEmbedding
+from Embedding import getEmbedding, getWordIndex, Embedding
 import os
 from bs4 import BeautifulSoup
 import re
@@ -9,12 +9,11 @@ import nltk
 from sklearn.model_selection import train_test_split
 
 DATASET_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath("__file__"))), "Data/IMDB")
-MAX_WORDS = 512
 UNIQUE_LABEL = ["positive", "negative"]
 
 
-def get_data(random_state: int = 1234):
-    # nltk.download('punkt')
+def get_data(random_state: int = 1234, MAX_WORDS: int = 512, glove: bool = True, embedding_size: int = 100):
+    nltk.download('punkt')
 
     path = os.path.join(DATASET_DIR, "IMDB Dataset.csv")
 
@@ -33,7 +32,11 @@ def get_data(random_state: int = 1234):
     texts = df['review'].to_list()
     labels = pd.get_dummies(df["sentiment"])["positive"].to_numpy()
 
-    layer, word_index = getEmbedding(texts, labels, maxLength=MAX_WORDS)
+    if glove:
+        layer, word_index = getEmbedding(texts, labels, gloveSize=embedding_size, maxLength=MAX_WORDS)
+    else:
+        word_index = getWordIndex(texts)
+        layer = Embedding(len(word_index) + 1, embedding_size, input_length=MAX_WORDS)
 
     sentences = []
     max_words = 0
