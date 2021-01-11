@@ -16,10 +16,10 @@ APPLY_GLOVE = False
 EMBEDDING_SIZE = 32
 IS_DROP_OUT = True
 DROP_OUT_RATE = 0.2
-EPOCH = 2
+EPOCH = 25
 BATCH_SIZE = 32
 MAX_WORDS = 512
-LAYER_SIZE = 64
+LAYER_SIZE = 128
 
 
 def train_model(model, x_train, x_test, y_train, y_test, epochs: int = EPOCH, batch_size: int = BATCH_SIZE):
