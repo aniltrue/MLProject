@@ -4,6 +4,7 @@ from RNNLayers.LSTMVariants import LSTMVariants
 from RNNLayers.GRU import GRU
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Dense, SpatialDropout1D, Dropout, Embedding
+from Cumax import cumax
 from tensorflow.keras.optimizers import Adam
 import pickle as pkl
 import os
@@ -16,10 +17,10 @@ APPLY_GLOVE = False
 EMBEDDING_SIZE = 32
 IS_DROP_OUT = True
 DROP_OUT_RATE = 0.2
-EPOCH = 25
+EPOCH = 1
 BATCH_SIZE = 32
-MAX_WORDS = 512
-LAYER_SIZE = 128
+MAX_WORDS = 256
+LAYER_SIZE = 64
 
 
 def train_model(model, x_train, x_test, y_train, y_test, epochs: int = EPOCH, batch_size: int = BATCH_SIZE):
@@ -37,13 +38,13 @@ def get_model(name: str, cell_name: str, embedding, max_words: int = MAX_WORDS, 
         embedded_layer = SpatialDropout1D(DROP_OUT_RATE)(embedded_layer)
 
     if cell_name == "LSTM":
-        rnn = LSTM(layer_size)
+        rnn = LSTM(layer_size, recurrent_activation=cumax)
     elif cell_name == "GRU":
-        rnn = GRU(layer_size)
+        rnn = GRU(layer_size, recurrent_activation=cumax)
     elif cell_name == "NP":
-        rnn = LSTM(layer_size, peephole=False)
+        rnn = LSTM(layer_size, peephole=False, recurrent_activation=cumax)
     else:
-        rnn = LSTMVariants(layer_size, cell_name)
+        rnn = LSTMVariants(layer_size, cell_name, recurrent_activation=cumax)
 
     rnn_layer = rnn(embedded_layer)
     if IS_DROP_OUT:
