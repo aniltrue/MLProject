@@ -1,7 +1,7 @@
 from IMDB.DataReader import get_data
 from RNNLayers.LSTM import LSTM
 from RNNLayers.LSTMVariants import LSTMVariants
-from RNNLayers.GRU import GRU
+from RNNLayers.GRU import GRU, BiGRU
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Dense, SpatialDropout1D, Dropout, Embedding
 from Cumax import cumax
@@ -40,7 +40,7 @@ def get_model(name: str, cell_name: str, embedding, max_words: int = MAX_WORDS, 
     if cell_name == "LSTM":
         rnn = LSTM(layer_size, recurrent_activation=cumax)
     elif cell_name == "GRU":
-        rnn = GRU(layer_size, recurrent_activation=cumax)
+        rnn = BiGRU(layer_size)
     elif cell_name == "NP":
         rnn = LSTM(layer_size, peephole=False, recurrent_activation=cumax)
     else:
@@ -54,6 +54,8 @@ def get_model(name: str, cell_name: str, embedding, max_words: int = MAX_WORDS, 
 
     model = Model(inputs=[input_layer], outputs=[output_layer], name=name)
     model.compile(loss="binary_crossentropy", optimizer=Adam(), metrics=["acc"])
+
+    model.summary()
 
     return model
 

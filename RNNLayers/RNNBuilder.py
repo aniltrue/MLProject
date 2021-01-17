@@ -183,15 +183,20 @@ class AbstractBiRNNBuilder(AbstractBiRNN, ABC):
                  use_bias: bool = True,
                  **kwargs):
 
+        name = kwargs["name"]
+
+        kwargs["name"] = name + "_forward"
         cell_f = self.get_cell_forward(units, kernel_activation, recurrent_activation,
                                        kernel_initializer, recurrent_initializer, bias_initializer,
                                        use_bias, **kwargs)
 
+        kwargs["name"] = name + "_backward"
         cell_b = self.get_cell_backward(units, kernel_activation, recurrent_activation,
                                         kernel_initializer, recurrent_initializer, bias_initializer,
                                         use_bias, **kwargs)
 
-        super(AbstractBiRNNBuilder, self).__init__(units, cell_f, cell_b, return_sequences)
+        kwargs["name"] = name
+        super(AbstractBiRNNBuilder, self).__init__(units, cell_f, cell_b, return_sequences, **kwargs)
 
     @abstractmethod
     def get_cell_forward(self, units: int,
