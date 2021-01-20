@@ -96,11 +96,9 @@ class RNNExperimentCallBack(Callback):
 
         axs[0].set_title("Loss for %s" % self.name)
         axs[0].legend()
-        axs[0].set_xticks(list(range(1, epochs + 1)))
 
         axs[1].set_title("Metric (%s) for %s" % (self.metric, self.name))
         axs[1].legend()
-        axs[1].set_xticks(list(range(1, epochs + 1)))
 
         fig.tight_layout()
         plt.tight_layout()

@@ -67,7 +67,7 @@ def lstm_nfg_cell(units: int,
         .add_var("h_next", ["C_next", "output"], lambda x: cell.kernel_activation(x[0]) * x[1])
 
 
-# LSTM without Output Gate
+# LSTM without output Gate
 def lstm_nog_cell(units: int,
                   peephole: bool = True,
                   kernel_activation: str = "tanh",
@@ -135,7 +135,7 @@ def lstm_niaf_cell(units: int,
         .add_var("h_next", ["C_next", "output"], lambda x: cell.kernel_activation(x[0]) * x[1])
 
 
-# LSTM without Output Activation
+# LSTM without output Activation
 def lstm_noaf_cell(units: int,
                    peephole: bool = True,
                    kernel_activation: str = "tanh",
