@@ -73,7 +73,7 @@ class AbstractRNN(Layer, ABC):
         last_output, outputs, states = K.rnn(step_fn, inputs, initial_states=initial_states, go_backwards=self.reversed, input_length=input_shape[1])
 
         if self.return_sequences:
-            return outputs
+            return states
         else:
             return last_output
 

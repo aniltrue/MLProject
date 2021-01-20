@@ -7,6 +7,7 @@ from nltk import word_tokenize
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 import nltk
 from sklearn.model_selection import train_test_split
+import numpy as np
 
 DATASET_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath("__file__"))), "Data/IMDB")
 UNIQUE_LABEL = ["positive", "negative"]
@@ -65,7 +66,11 @@ def get_data(random_state: int = 1234, MAX_WORDS: int = 512, glove: bool = True,
 if __name__ == "__main__":  # Testing
     X_train, X_test, Y_train, Y_test, layer, word_index = get_data()
 
+    print(len(word_index))
     print(X_train.shape)
     print(X_test.shape)
     print(Y_train.shape)
     print(Y_test.shape)
+
+    print(np.unique(Y_train, return_counts=True))
+    print(np.unique(Y_test, return_counts=True))

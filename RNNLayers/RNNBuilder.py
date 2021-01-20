@@ -25,10 +25,14 @@ class RNNCellBuilder(AbstractRNNCell):
 
         self.vars = {}
         self.w = {}  # Weights with name
+        self.v = {} # Values
 
         self._recurrent_list = []
         self._kernel_list = []
         self._operation_list = []
+
+        self.return_gate = False
+        self.gate_name = ""
 
     def add_recurrent(self, name: str, inputs: list, activation=None):
         if activation is None:
@@ -118,26 +122,32 @@ class RNNCellBuilder(AbstractRNNCell):
         flat_dims = tf.TensorShape([self.units]).as_list()
         init_state_size = [batch_size] + flat_dims
 
-        return [tf.zeros(init_state_size, dtype=dtype) for _ in self.states]
+        return [tf.zeros(init_state_size, dtype=dtype) for _ in range(self.states_number)]
 
     def call(self, inputs, states, **kwargs):
         assert len(states) == self.states_number
 
-        v = {"X": inputs}
+        self.v = {"X": inputs}
 
         for i, state in enumerate(self.states):
-            v[state] = states[i]
+            self.v[state] = states[i]
 
         for name, [input_list, f] in self.vars.items():
-            v[name] = f([v[input_name] for input_name in input_list])
+            self.v[name] = f([self.v[input_name] for input_name in input_list])
 
         next_states = []
         for state in self.states:
-            assert "%s_next" % state in v
+            assert "%s_next" % state in self.v
 
-            next_states.append(v["%s_next" % state])
+            next_states.append(self.v["%s_next" % state])
 
-        return v[self.states[0]], next_states
+        if self.return_gate:
+            next_states.append(self.v[self.gate_name])
+
+        if not self.return_gate:
+            return self.v[self.states[0]], next_states
+        else:
+            return self.v[self.gate_name], next_states
 
 
 class AbstractRNNBuilder(AbstractRNN, ABC):
